@@ -2,11 +2,10 @@ package com.security.service;
 
 import com.security.dto.SignInRequest;
 import com.security.dto.SignUpRequest;
-import com.security.dto.reponse.JwtAuthenticationResponse;
-import com.security.entites.User;
+import org.springframework.http.ResponseEntity;
 
 public interface AuthenticationService {
-	User signUp(SignUpRequest signUpRequest);
+	ResponseEntity<?> signUp(SignUpRequest signUpRequest);
 	
-	JwtAuthenticationResponse signIn(SignInRequest signInRequest);
+	ResponseEntity<?> signIn(SignInRequest signInRequest);
 }

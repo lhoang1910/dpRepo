@@ -1,7 +1,9 @@
 package com.security.controller;
 
+import com.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,21 +15,41 @@ import com.security.dto.reponse.JwtAuthenticationResponse;
 import com.security.entites.User;
 import com.security.service.AuthenticationService;
 
+import javax.swing.text.html.Option;
+import java.util.Objects;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 	
 	@Autowired
-
 	private AuthenticationService authenticationService;
-	
+
+	@Autowired
+	UserRepository repository;
+
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
 	@PostMapping("/signup")
-	public ResponseEntity<User> signUp(@RequestBody SignUpRequest signUpRequest){
+	public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest){
 		return ResponseEntity.ok(authenticationService.signUp(signUpRequest));
 	}
 	
 	@PostMapping("/signin")
-	public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest signInRequest){
-		return ResponseEntity.ok(authenticationService.signIn(signInRequest));
+	public ResponseEntity<?> signin(@RequestBody SignInRequest signInRequest){
+		Optional<User> loginUser = repository.findByEmail(signInRequest.getEmail());
+
+		if (loginUser.isEmpty()){
+			return ResponseEntity.ok("Username khong dung");
+		} else {
+			if (passwordEncoder.matches(loginUser.get().getPassword(), signInRequest.getPassword())){
+				return ResponseEntity.ok("Password khong dung");
+			} else {
+				return ResponseEntity.ok(authenticationService.signIn(signInRequest));
+			}
+		}
+
 	}
 }
