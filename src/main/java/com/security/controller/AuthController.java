@@ -44,7 +44,7 @@ public class AuthController {
 		if (loginUser.isEmpty()){
 			return ResponseEntity.ok("Username khong dung");
 		} else {
-			if (passwordEncoder.matches(loginUser.get().getPassword(), signInRequest.getPassword())){
+			if (!passwordEncoder.matches(loginUser.get().getPassword(), signInRequest.getPassword())){
 				return ResponseEntity.ok("Password khong dung");
 			} else {
 				return ResponseEntity.ok(authenticationService.signIn(signInRequest));
