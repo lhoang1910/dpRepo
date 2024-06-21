@@ -48,12 +48,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public ResponseEntity<?> signIn(SignInRequest signInRequest) {
+	public String signIn(SignInRequest signInRequest) {
 		Optional<User> user = userRepository.findByEmail(signInRequest.getEmail());
-
-		if (user.isEmpty()){
-			return ResponseEntity.ok("Username khong dung");
-		}
 
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(signInRequest.getEmail(), signInRequest.getPassword()));
@@ -65,7 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		jwtAuthenticationResponse.setToken(jwt);
 		jwtAuthenticationResponse.setRefreshToken(refreshToken);
-		return ResponseEntity.ok(jwtAuthenticationResponse);
+		return jwtAuthenticationResponse.getToken();
 
 	}
 

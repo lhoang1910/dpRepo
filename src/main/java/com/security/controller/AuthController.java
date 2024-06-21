@@ -42,7 +42,7 @@ public class AuthController {
 	public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest){
 		return ResponseEntity.ok(authenticationService.signUp(signUpRequest));
 	}
-	
+
 	@PostMapping("/signin")
 	public ResponseEntity<?> signin(@RequestBody SignInRequest signInRequest){
 		Optional<User> loginUser = repository.findByEmail(signInRequest.getEmail());
@@ -50,9 +50,10 @@ public class AuthController {
 		if (loginUser.isEmpty()){
 			return ResponseEntity.ok(new LoginResponse(false ,"Username khong dung", null));
 		} else {
-			if (!passwordEncoder.matches(loginUser.get().getPassword(), signInRequest.getPassword())){
+			if (!passwordEncoder.matches(signInRequest.getPassword(), loginUser.get().getPassword())){
 				return ResponseEntity.ok(new LoginResponse(false ,"Password khong dung", null));
-			} else {
+			}
+			else {
 				return ResponseEntity.ok(new LoginResponse(true , String.valueOf(authenticationService.signIn(signInRequest)),
 						service.userDetailsService()
 								.loadUserByUsername(signInRequest.getEmail())));
